@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("cloudinary").v2;
+
 // Controllers
 const {
   createListing,
@@ -12,14 +15,22 @@ const {
 } = require("../controllers/listingController");
 
 // ======================
-// MULTER CONFIG
+// CLOUDINARY CONFIG
 // ======================
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
+// ======================
+// MULTER + CLOUDINARY
+// ======================
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "pg-listings",
+    allowed_formats: ["jpg", "png", "jpeg", "webp"],
   },
 });
 
@@ -29,16 +40,16 @@ const upload = multer({ storage });
 // ROUTES
 // ======================
 
-// CREATE LISTING (with image upload)
+// CREATE LISTING
 router.post("/", upload.single("image"), createListing);
 
 // GET ALL LISTINGS
 router.get("/", getListings);
 
-// 🔥 GET SINGLE LISTING (THIS WAS MISSING BEFORE)
+// GET SINGLE LISTING
 router.get("/:id", getSingleListing);
 
-// UPDATE LISTING (with image upload)
+// UPDATE LISTING
 router.put("/:id", upload.single("image"), updateListing);
 
 // DELETE LISTING

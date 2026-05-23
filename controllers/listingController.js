@@ -1,11 +1,9 @@
 const Listing = require("../models/Listing");
 
-
 // =====================================
 // CREATE LISTING
 // =====================================
 exports.createListing = async (req, res) => {
-
   try {
 
     const {
@@ -18,12 +16,12 @@ exports.createListing = async (req, res) => {
       description,
     } = req.body;
 
-    // IMAGE
+    // ✅ CLOUDINARY IMAGE URL
     const image = req.file
-      ? req.file.filename
+      ? req.file.path
       : null;
 
-    // CREATE NEW LISTING
+    // CREATE LISTING
     const listing = await Listing.create({
       name,
       location,
@@ -35,23 +33,10 @@ exports.createListing = async (req, res) => {
       image,
     });
 
-    // RESPONSE WITH FULL IMAGE URL
-    const updatedListing = {
-
-      ...listing.toJSON(),
-
-      image: image
-        ? `https://pg-backend-9xs4.onrender.com/uploads/${image}`
-        : null,
-
-    };
-
     res.status(201).json({
-
       success: true,
       message: "Listing Created Successfully",
-      data: updatedListing,
-
+      data: listing,
     });
 
   } catch (error) {
@@ -59,15 +44,12 @@ exports.createListing = async (req, res) => {
     console.log(error);
 
     res.status(500).json({
-
       success: false,
       error: error.message,
-
     });
 
   }
 };
-
 
 // =====================================
 // GET ALL LISTINGS
@@ -77,38 +59,22 @@ exports.getListings = async (req, res) => {
   try {
 
     const listings = await Listing.findAll({
-
       order: [["id", "DESC"]],
-
     });
 
-    // ADD FULL IMAGE URL
-    const updatedListings = listings.map((listing) => ({
-
-      ...listing.toJSON(),
-
-      image: listing.image
-        ? `https://pg-backend-9xs4.onrender.com/uploads/${listing.image}`
-        : null,
-
-    }));
-
-    res.status(200).json(updatedListings);
+    res.status(200).json(listings);
 
   } catch (error) {
 
     console.log(error);
 
     res.status(500).json({
-
       success: false,
       error: error.message,
-
     });
 
   }
 };
-
 
 // =====================================
 // GET SINGLE LISTING
@@ -121,45 +87,28 @@ exports.getSingleListing = async (req, res) => {
 
     const listing = await Listing.findByPk(id);
 
-    // NOT FOUND
     if (!listing) {
 
       return res.status(404).json({
-
         success: false,
         message: "Listing Not Found",
-
       });
 
     }
 
-    // FULL IMAGE URL
-    const updatedListing = {
-
-      ...listing.toJSON(),
-
-      image: listing.image
-        ? `https://pg-backend-9xs4.onrender.com/uploads/${listing.image}`
-        : null,
-
-    };
-
-    res.status(200).json(updatedListing);
+    res.status(200).json(listing);
 
   } catch (error) {
 
     console.log(error);
 
     res.status(500).json({
-
       success: false,
       error: error.message,
-
     });
 
   }
 };
-
 
 // =====================================
 // UPDATE LISTING
@@ -180,29 +129,23 @@ exports.updateListing = async (req, res) => {
       description,
     } = req.body;
 
-    // FIND LISTING
     const listing = await Listing.findByPk(id);
 
-    // NOT FOUND
     if (!listing) {
 
       return res.status(404).json({
-
         success: false,
         message: "Listing Not Found",
-
       });
 
     }
 
-    // IMAGE
+    // ✅ CLOUDINARY IMAGE URL
     const image = req.file
-      ? req.file.filename
+      ? req.file.path
       : listing.image;
 
-    // UPDATE LISTING
     await listing.update({
-
       name,
       location,
       price,
@@ -211,26 +154,12 @@ exports.updateListing = async (req, res) => {
       category,
       description,
       image,
-
     });
 
-    // UPDATED RESPONSE
-    const updatedListing = {
-
-      ...listing.toJSON(),
-
-      image: image
-        ? `https://pg-backend-9xs4.onrender.com/uploads/${image}`
-        : null,
-
-    };
-
     res.status(200).json({
-
       success: true,
       message: "Listing Updated Successfully",
-      data: updatedListing,
-
+      data: listing,
     });
 
   } catch (error) {
@@ -238,15 +167,12 @@ exports.updateListing = async (req, res) => {
     console.log(error);
 
     res.status(500).json({
-
       success: false,
       error: error.message,
-
     });
 
   }
 };
-
 
 // =====================================
 // DELETE LISTING
@@ -259,26 +185,20 @@ exports.deleteListing = async (req, res) => {
 
     const listing = await Listing.findByPk(id);
 
-    // NOT FOUND
     if (!listing) {
 
       return res.status(404).json({
-
         success: false,
         message: "Listing Not Found",
-
       });
 
     }
 
-    // DELETE
     await listing.destroy();
 
     res.status(200).json({
-
       success: true,
       message: "Listing Deleted Successfully",
-
     });
 
   } catch (error) {
@@ -286,10 +206,8 @@ exports.deleteListing = async (req, res) => {
     console.log(error);
 
     res.status(500).json({
-
       success: false,
       error: error.message,
-
     });
 
   }
