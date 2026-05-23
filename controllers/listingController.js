@@ -41,7 +41,7 @@ exports.createListing = async (req, res) => {
       ...listing.toJSON(),
 
       image: image
-        ? `http://localhost:5000/uploads/${image}`
+        ? `https://pg-backend-9xs4.onrender.com/uploads/${image}`
         : null,
 
     };
@@ -88,7 +88,7 @@ exports.getListings = async (req, res) => {
       ...listing.toJSON(),
 
       image: listing.image
-        ? `http://localhost:5000/uploads/${listing.image}`
+        ? `https://pg-backend-9xs4.onrender.com/uploads/${listing.image}`
         : null,
 
     }));
@@ -139,7 +139,7 @@ exports.getSingleListing = async (req, res) => {
       ...listing.toJSON(),
 
       image: listing.image
-        ? `http://localhost:5000/uploads/${listing.image}`
+        ? `https://pg-backend-9xs4.onrender.com/uploads/${listing.image}`
         : null,
 
     };
@@ -220,7 +220,7 @@ exports.updateListing = async (req, res) => {
       ...listing.toJSON(),
 
       image: image
-        ? `http://localhost:5000/uploads/${image}`
+        ? `https://pg-backend-9xs4.onrender.com/uploads/${image}`
         : null,
 
     };

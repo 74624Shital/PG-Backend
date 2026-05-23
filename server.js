@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const path = require("path");
 
 dotenv.config();
 
@@ -12,15 +13,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ✅ STATIC IMAGE FOLDER
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// ✅ ROUTES
 app.use("/api/listings", listingRoutes);
 
+// ✅ TEST ROUTE
 app.get("/", (req, res) => {
   res.send("Backend Running 🚀");
 });
 
-// START SERVER
+// ✅ START SERVER
 const startServer = async () => {
   try {
+
     await sequelize.authenticate();
     console.log("Database Connected ✅");
 
@@ -33,7 +40,9 @@ const startServer = async () => {
     });
 
   } catch (err) {
+
     console.log("DB Error:", err);
+
   }
 };
 
